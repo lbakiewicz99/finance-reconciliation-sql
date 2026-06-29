@@ -20,3 +20,12 @@ temp/
 
 # Environment files
 .env
+
+# Python / Streamlit
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.streamlit/secrets.toml
+.env

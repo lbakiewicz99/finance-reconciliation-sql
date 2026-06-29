@@ -233,9 +233,11 @@ WHERE break_status IN ('OPEN', 'ESCALATED')
 -- Summarizes reconciliation results by month.
 -- ============================================================
 
+DROP VIEW IF EXISTS finance_recon.vw_monthly_reconciliation_summary;
+
 CREATE OR REPLACE VIEW vw_monthly_reconciliation_summary AS
 SELECT
-    DATE_TRUNC('month', period_end_date)::DATE AS reconciliation_month_start_date,
+    DATE_TRUNC('month', period_end_date)::DATE AS reconciliation_month,
 
     COUNT(*) AS total_results,
 

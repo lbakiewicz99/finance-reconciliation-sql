@@ -35,30 +35,33 @@ Common reconciliation issues include:
 
 This project models those scenarios using PostgreSQL.
 
-## Project Scope
+### Project scope
 
-The project focuses on SQL-based reconciliation logic and reporting.
+This project focuses on SQL-based reconciliation logic and business-facing reporting outputs for a simulated finance operations environment.
 
 Included:
 
-* PostgreSQL schema design,
-* relational tables with primary keys, foreign keys and check constraints,
-* realistic sample data,
-* normalized reference matching logic,
-* reporting views,
-* reconciliation analysis queries,
-* validation checks,
-* business documentation.
+* relational data model for funds, accounts, internal transactions, external transactions, reconciliation runs, exception types, reconciliation results, and manual adjustments;
+* sample data covering matched transactions, unmatched items, amount mismatches, currency mismatches, duplicate transactions, aged breaks, and reference mismatches;
+* SQL reconciliation queries comparing internal finance records against external bank, custodian, or PSP statement data;
+* reporting views for reconciliation detail, open breaks, aged exceptions, monthly summary, exception summary, and reconciliation accuracy;
+* validation checks for data integrity and reconciliation result consistency;
+* exported CSV examples for reviewer-friendly output inspection;
+* lightweight Streamlit dashboard reading exported CSV files from `output_examples/`.
+
+The Streamlit dashboard is intentionally lightweight and uses exported CSV outputs, keeping the core reconciliation logic transparent and reviewable in SQL.
 
 Not included:
 
-* application UI,
-* automated file ingestion,
-* dashboarding tool,
-* production deployment,
-* Python pipeline.
+* production-grade ETL pipelines;
+* real bank, custodian, PSP, or fund accounting system integrations;
+* live database connection from the Streamlit dashboard;
+* user authentication, authorization, or role-based access control;
+* write-back workflows for resolving breaks from the UI;
+* automated scheduling, orchestration, or alerting;
+* cloud deployment or containerized production infrastructure;
+* sensitive, personal, or real client transaction data.
 
-These may be added later as optional enhancements.
 
 ## Technologies Used
 

@@ -175,6 +175,7 @@ WHERE break_status IN ('OPEN', 'ESCALATED');
 -- View: vw_aged_exceptions
 -- Purpose:
 -- Shows unresolved breaks older than 5 calendar days.
+-- Adds aging severity fields to support prioritization.
 -- ============================================================
 
 CREATE OR REPLACE VIEW vw_aged_exceptions AS
@@ -205,7 +206,23 @@ SELECT
     internal_amount,
     external_amount,
 
-    notes
+    notes,
+
+    5 AS aging_threshold_days,
+
+    days_open - 5 AS days_over_aging_threshold,
+
+    CASE
+        WHEN days_open BETWEEN 6 AND 10
+            THEN 'AGED_6_TO_10_DAYS'
+        WHEN days_open BETWEEN 11 AND 30
+            THEN 'AGED_11_TO_30_DAYS'
+        WHEN days_open BETWEEN 31 AND 90
+            THEN 'AGED_31_TO_90_DAYS'
+        WHEN days_open > 90
+            THEN 'AGED_OVER_90_DAYS'
+        ELSE 'NOT_AGED'
+    END AS aging_bucket
 FROM vw_reconciliation_detail
 WHERE break_status IN ('OPEN', 'ESCALATED')
   AND days_open > 5;

@@ -333,6 +333,21 @@ Additional documentation is available in the `docs/` folder:
 | `reconciliation_rules.md` | Matching and exception rules.                                  |
 | `findings.md`             | Summary of reconciliation results and business interpretation. |
 
+
+## Output Examples
+
+The `output_examples/` folder contains CSV exports generated from the reporting views.
+
+These files allow reviewers to inspect sample reconciliation outputs without running the database locally.
+
+Included examples:
+
+- `matched_transactions_example.csv`
+- `open_breaks_example.csv`
+- `monthly_summary_example.csv`
+- `aged_exceptions_example.csv`
+
+
 ## Status
 
 Current project status:

@@ -59,22 +59,24 @@ Stores currency reference data.
 
 Stores transactions from the internal fund accounting or finance operations system.
 
-| Column                    | Data Type | Description                                       | Example               |
-| ------------------------- | --------- | ------------------------------------------------- | --------------------- |
-| `internal_transaction_id` | integer   | Unique internal transaction identifier.           | `1001`                |
-| `fund_id`                 | integer   | Fund linked to the transaction.                   | `1`                   |
-| `account_id`              | integer   | Account linked to the transaction.                | `1`                   |
-| `transaction_reference`   | varchar   | Internal transaction reference used for matching. | `TXN-2025-0001`       |
-| `transaction_type`        | varchar   | Business type of transaction.                     | `SUBSCRIPTION`        |
-| `direction`               | varchar   | Cash or transaction direction.                    | `IN`                  |
-| `currency_code`           | char(3)   | Transaction currency.                             | `USD`                 |
-| `amount`                  | numeric   | Transaction amount.                               | `125000.00`           |
-| `trade_date`              | date      | Trade date or transaction initiation date.        | `2025-01-14`          |
-| `settlement_date`         | date      | Expected settlement date.                         | `2025-01-15`          |
-| `booking_date`            | date      | Date when the transaction was booked internally.  | `2025-01-15`          |
-| `source_system`           | varchar   | Name of the internal source system.               | `Multifonds`          |
-| `transaction_status`      | varchar   | Internal transaction status.                      | `BOOKED`              |
-| `created_at`              | timestamp | Record creation timestamp.                        | `2025-01-15 08:30:00` |
+| Column                    | Data Type | Description                                                                                                 | Example               |
+| ------------------------- | --------- | ----------------------------------------------------------------------------------------------------------- | --------------------- |
+| `internal_transaction_id` | integer   | Unique internal transaction identifier.                                                                     | `1001`                |
+| `fund_id`                 | integer   | Fund linked to the transaction.                                                                             | `1`                   |
+| `account_id`              | integer   | Account linked to the transaction.                                                                          | `1`                   |
+| `transaction_reference`   | varchar   | Raw internal transaction reference from the internal system.                                                | `TXN-2025-0001`       |
+| `matching_reference`      | varchar   | Normalized reference used for reconciliation matching. Usually equal to the internal transaction reference. | `TXN-2025-0001`       |
+| `transaction_type`        | varchar   | Business type of transaction.                                                                               | `SUBSCRIPTION`        |
+| `direction`               | varchar   | Cash or transaction direction.                                                                              | `IN`                  |
+| `currency_code`           | char(3)   | Transaction currency.                                                                                       | `USD`                 |
+| `amount`                  | numeric   | Transaction amount.                                                                                         | `125000.00`           |
+| `trade_date`              | date      | Trade date or transaction initiation date.                                                                  | `2025-01-14`          |
+| `settlement_date`         | date      | Expected settlement date.                                                                                   | `2025-01-15`          |
+| `booking_date`            | date      | Date when the transaction was booked internally.                                                            | `2025-01-15`          |
+| `source_system`           | varchar   | Name of the internal source system.                                                                         | `Multifonds`          |
+| `transaction_status`      | varchar   | Internal transaction status.                                                                                | `BOOKED`              |
+| `created_at`              | timestamp | Record creation timestamp.                                                                                  | `2025-01-15 08:30:00` |
+
 
 Possible `transaction_type` values:
 
@@ -104,21 +106,23 @@ Possible `transaction_status` values:
 
 Stores transactions received from an external statement source such as a bank, custodian or payment provider.
 
-| Column                    | Data Type | Description                                               | Example                 |
-| ------------------------- | --------- | --------------------------------------------------------- | ----------------------- |
-| `external_transaction_id` | integer   | Unique external transaction identifier.                   | `5001`                  |
-| `account_id`              | integer   | Account linked to the external statement line.            | `1`                     |
-| `external_reference`      | varchar   | External transaction reference.                           | `TXN-2025-0001`         |
-| `statement_reference`     | varchar   | Statement or file reference.                              | `BNK-STMT-20250115-001` |
-| `transaction_type`        | varchar   | External transaction type or mapped transaction category. | `SUBSCRIPTION`          |
-| `direction`               | varchar   | Cash or transaction direction.                            | `IN`                    |
-| `currency_code`           | char(3)   | Transaction currency.                                     | `USD`                   |
-| `amount`                  | numeric   | Transaction amount from the external source.              | `125000.00`             |
-| `value_date`              | date      | External value date.                                      | `2025-01-15`            |
-| `booking_date`            | date      | External booking date.                                    | `2025-01-15`            |
-| `counterparty`            | varchar   | Counterparty or payer/payee information.                  | `Investor A`            |
-| `statement_source`        | varchar   | Source of the external statement.                         | `Bank`                  |
-| `created_at`              | timestamp | Record creation timestamp.                                | `2025-01-15 09:00:00`   |
+| Column                    | Data Type | Description                                                                                        | Example                     |
+| ------------------------- | --------- | -------------------------------------------------------------------------------------------------- | --------------------------- |
+| `external_transaction_id` | integer   | Unique external transaction identifier.                                                            | `5001`                      |
+| `account_id`              | integer   | Account linked to the external statement line.                                                     | `1`                         |
+| `external_reference`      | varchar   | Raw external transaction reference from the statement source.                                      | `PSP-CAPTURE-TXN-2025-0004` |
+| `matching_reference`      | varchar   | Normalized or extracted reference used to match the external record against internal transactions. | `TXN-2025-0004`             |
+| `statement_reference`     | varchar   | Statement or file reference.                                                                       | `BNK-STMT-20250115-001`     |
+| `transaction_type`        | varchar   | External transaction type or mapped transaction category.                                          | `SUBSCRIPTION`              |
+| `direction`               | varchar   | Cash or transaction direction.                                                                     | `IN`                        |
+| `currency_code`           | char(3)   | Transaction currency.                                                                              | `USD`                       |
+| `amount`                  | numeric   | Transaction amount from the external source.                                                       | `125000.00`                 |
+| `value_date`              | date      | External value date.                                                                               | `2025-01-15`                |
+| `booking_date`            | date      | External booking date.                                                                             | `2025-01-15`                |
+| `counterparty`            | varchar   | Counterparty or payer/payee information.                                                           | `Investor A`                |
+| `statement_source`        | varchar   | Source of the external statement.                                                                  | `Bank`                      |
+| `created_at`              | timestamp | Record creation timestamp.                                                                         | `2025-01-15 09:00:00`       |
+
 
 Possible `statement_source` values:
 
@@ -127,6 +131,34 @@ Possible `statement_source` values:
 * `PSP`
 * `Broker`
 * `Transfer Agent`
+
+## Reference Matching Logic
+
+The project separates raw source references from normalized matching references.
+
+Raw references are stored exactly as they appear in the source systems:
+
+* `internal_transactions.transaction_reference`
+* `external_transactions.external_reference`
+
+Matching references are normalized values used by the reconciliation process:
+
+* `internal_transactions.matching_reference`
+* `external_transactions.matching_reference`
+
+This reflects a common reconciliation scenario where external providers may add prefixes, suffixes or provider-specific formatting to transaction references.
+
+Example:
+
+| Source                 | Raw Reference               | Matching Reference |
+| ---------------------- | --------------------------- | ------------------ |
+| Internal system        | `TXN-2025-0004`             | `TXN-2025-0004`    |
+| External PSP statement | `PSP-CAPTURE-TXN-2025-0004` | `TXN-2025-0004`    |
+
+In this case, the raw references differ, but the normalized matching references align. Therefore, the transaction can still be reconciled.
+
+A reference mismatch occurs only when the normalized matching references differ while other transaction attributes suggest that the records may refer to the same business event.
+
 
 ## Table: `reconciliation_runs`
 
@@ -172,6 +204,7 @@ Planned exception codes:
 * `DUPLICATE_INTERNAL`
 * `DUPLICATE_EXTERNAL`
 * `AGED_OPEN_BREAK`
+* `REFERENCE_MISMATCH`
 
 ## Table: `reconciliation_results`
 

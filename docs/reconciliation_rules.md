@@ -38,28 +38,30 @@ Not every exception means that a transaction is incorrect. Some differences may 
 
 ### 1. Exact Match
 
-An exact match occurs when an internal transaction and an external transaction have the same key reconciliation attributes.
+A transaction is considered an exact match when the internal and external records align across the core reconciliation fields.
 
-A transaction is considered fully matched when the following fields align:
+Required matching fields:
 
-* account,
-* currency,
-* transaction reference,
-* transaction type,
-* amount,
-* settlement date or value date,
-* transaction direction.
+- account,
+- normalized matching reference,
+- transaction type,
+- direction,
+- currency,
+- amount,
+- settlement date / value date.
+
+Raw references do not have to be identical if the normalized matching references are the same.
 
 Example:
 
-| Field     | Internal Record | External Record |
-| --------- | --------------- | --------------- |
-| Reference | TXN-1001        | TXN-1001        |
-| Account   | ACC-GBP-001     | ACC-GBP-001     |
-| Currency  | GBP             | GBP             |
-| Amount    | 1250.00         | 1250.00         |
-| Date      | 2025-01-15      | 2025-01-15      |
-| Direction | IN              | IN              |
+| Field              | Internal        | External                    |
+|--------------------|-----------------|-----------------------------|
+| Raw reference      | `TXN-2025-0004` | `PSP-CAPTURE-TXN-2025-0004` |
+| Matching reference | `TXN-2025-0004` | `TXN-2025-0004`             |
+| Amount             | `10000.00`      | `10000.00`                  |
+| Currency           | `USD`           | `USD`                       | 
+ 
+This can be treated as a matched transaction because the matching references align.
 
 Expected result:
 
@@ -276,36 +278,58 @@ UNRESOLVED
 
 Unresolved exceptions should be included in open breaks reporting.
 
+### 12. Reference Mismatch
+
+A reference mismatch occurs when an internal and external record appear to describe the same business transaction based on account, amount, currency, transaction type and date, but their normalized matching references do not match.
+
+This exception is used when other attributes suggest a possible relationship between the records, but the reference logic does not support a clean match.
+
+Example:
+
+| Field              | Internal        | External        |
+|--------------------|-----------------|-----------------|
+| Account            | `ACC-USD-001`   | `ACC-USD-001`   |
+| Amount             | `8000.00`       | `8000.00`       |
+| Currency           | `USD`           | `USD`           |
+| Date               | `2025-01-27`    | `2025-01-27`    |
+| Matching reference | `TXN-2025-0010` | `TXN-2025-9999` |
+
+This should be reviewed as a possible reference mismatch rather than automatically matched.
+
 ## Exception Priority
 
 Not all reconciliation exceptions have the same operational risk.
 
 Suggested priority:
 
-| Priority      | Exception Type                 | Reason                                             |
-| ------------- | ------------------------------ | -------------------------------------------------- |
-| High          | External-only transaction      | Cash movement may not be booked internally         |
-| High          | Amount mismatch                | Financial value differs between sources            |
-| High          | Currency mismatch              | May affect reporting and cash balances             |
-| Medium        | Internal-only transaction      | May be timing-related or missing externally        |
-| Medium        | Duplicate internal transaction | May overstate activity                             |
-| Medium        | Duplicate external transaction | May indicate file or provider issue                |
-| Low / Medium  | Date mismatch                  | Often timing-related, but should still be reviewed |
-| Medium / High | Aged open break                | Risk increases with age                            |
+| Priority      | Exception Type                 | Reason                                                       |
+| ------------- | ------------------------------ | ------------------------------------------------------------ |
+| High          | External-only transaction      | Cash movement may not be booked internally                   |
+| High          | Amount mismatch                | Financial value differs between sources                      |
+| High          | Currency mismatch              | May affect reporting and cash balances                       |
+| Medium        | Internal-only transaction      | May be timing-related or missing externally                  |
+| Medium        | Duplicate internal transaction | May overstate activity                                       |
+| Medium        | Duplicate external transaction | May indicate file or provider issue                          |
+| Low / Medium  | Date mismatch                  | Often timing-related, but should still be reviewed           |
+| Medium / High | Aged open break                | Risk increases with age                                      |
+| Medium        | REFERENCE_MISMATCH             | Possible same transaction, but normalized references differ. |
+
 
 ## Matching Hierarchy
 
-The reconciliation process should apply matching logic in a structured order:
+The reconciliation logic should apply rules in the following order:
 
-1. Identify exact matches.
-2. Identify possible matches with amount mismatches.
-3. Identify possible matches with date mismatches.
-4. Identify possible matches with currency mismatches.
-5. Identify unmatched internal records.
-6. Identify unmatched external records.
-7. Identify duplicates.
-8. Classify aged unresolved breaks.
-9. Summarize resolved vs unresolved exceptions.
+1. exact matches using normalized matching references,
+2. amount mismatches,
+3. date mismatches,
+4. currency mismatches,
+5. reference mismatches,
+6. unmatched internal records,
+7. unmatched external records,
+8. duplicate internal records,
+9. duplicate external records,
+10. aged unresolved breaks,
+11. resolved vs unresolved break summary.
 
 This hierarchy helps avoid double-counting the same transaction across multiple exception categories.
 
@@ -332,3 +356,28 @@ They demonstrate how SQL can be used to:
 * monitor unresolved exceptions,
 * provide audit-friendly reporting,
 * improve operational control over financial data.
+
+## Reference Handling
+
+The reconciliation process distinguishes between raw source references and normalized matching references.
+
+Raw references are stored as provided by each source:
+
+- internal raw reference: `internal_transactions.transaction_reference`
+- external raw reference: `external_transactions.external_reference`
+
+Normalized matching references are used for reconciliation logic:
+
+- internal matching reference: `internal_transactions.matching_reference`
+- external matching reference: `external_transactions.matching_reference`
+
+External statement providers may use different reference formats than the internal system. For example, a PSP or bank may add prefixes, suffixes or provider-specific identifiers.
+
+Example:
+
+| Source   | Raw Reference               | Matching Reference |
+|----------|-----------------------------|--------------------|
+| Internal | `TXN-2025-0004`             | `TXN-2025-0004`    |
+| External | `PSP-CAPTURE-TXN-2025-0004` | `TXN-2025-0004`    |
+
+This is treated as a valid normalized reference match, not a reference mismatch.

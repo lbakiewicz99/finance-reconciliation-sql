@@ -9,7 +9,6 @@ SET search_path TO finance_recon;
 
 -- ============================================================
 -- Reference table: currencies
--- Stores currencies supported by the reconciliation process.
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS currencies (
@@ -24,7 +23,6 @@ CREATE TABLE IF NOT EXISTS currencies (
 
 -- ============================================================
 -- Reference table: funds
--- Stores funds included in the reconciliation process.
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS funds (
@@ -42,7 +40,6 @@ CREATE TABLE IF NOT EXISTS funds (
 
 -- ============================================================
 -- Reference table: accounts
--- Stores cash, custody, settlement and PSP accounts.
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS accounts (
@@ -77,8 +74,8 @@ CREATE TABLE IF NOT EXISTS accounts (
 
 -- ============================================================
 -- Transaction table: internal_transactions
--- Stores transactions from the internal finance / fund accounting system.
--- Amounts are stored as positive values. Direction indicates IN / OUT.
+-- transaction_reference = raw reference from internal system
+-- matching_reference = normalized reference used for matching
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS internal_transactions (
@@ -86,6 +83,7 @@ CREATE TABLE IF NOT EXISTS internal_transactions (
     fund_id INTEGER NOT NULL,
     account_id INTEGER NOT NULL,
     transaction_reference VARCHAR(100) NOT NULL,
+    matching_reference VARCHAR(100) NOT NULL,
     transaction_type VARCHAR(50) NOT NULL,
     direction VARCHAR(10) NOT NULL,
     currency_code CHAR(3) NOT NULL,
@@ -139,14 +137,15 @@ CREATE TABLE IF NOT EXISTS internal_transactions (
 
 -- ============================================================
 -- Transaction table: external_transactions
--- Stores transactions from external statements.
--- Examples: bank statement, custodian statement, PSP file.
+-- external_reference = raw reference from external statement
+-- matching_reference = normalized/extracted reference used for matching
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS external_transactions (
     external_transaction_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     account_id INTEGER NOT NULL,
     external_reference VARCHAR(100) NOT NULL,
+    matching_reference VARCHAR(100) NOT NULL,
     statement_reference VARCHAR(100) NOT NULL,
     transaction_type VARCHAR(50) NOT NULL,
     direction VARCHAR(10) NOT NULL,
@@ -197,7 +196,6 @@ CREATE TABLE IF NOT EXISTS external_transactions (
 
 -- ============================================================
 -- Process table: reconciliation_runs
--- Stores metadata about each reconciliation process execution.
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS reconciliation_runs (
@@ -223,7 +221,6 @@ CREATE TABLE IF NOT EXISTS reconciliation_runs (
 
 -- ============================================================
 -- Reference table: exception_types
--- Stores standardized reconciliation exception categories.
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS exception_types (
@@ -234,7 +231,7 @@ CREATE TABLE IF NOT EXISTS exception_types (
     exception_priority VARCHAR(50) NOT NULL,
 
     CONSTRAINT chk_exception_types_priority
-        CHECK (priority IN (
+        CHECK (exception_priority IN (
             'Low',
             'Medium',
             'High'
@@ -243,11 +240,6 @@ CREATE TABLE IF NOT EXISTS exception_types (
 
 -- ============================================================
 -- Result table: reconciliation_results
--- Stores transaction-level reconciliation outcomes.
--- A result may link to:
--- - both internal and external transactions for matches/mismatches,
--- - only internal transaction for internal-only breaks,
--- - only external transaction for external-only breaks.
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS reconciliation_results (
@@ -315,7 +307,6 @@ CREATE TABLE IF NOT EXISTS reconciliation_results (
 
 -- ============================================================
 -- Action table: manual_adjustments
--- Stores manual actions used to resolve reconciliation breaks.
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS manual_adjustments (

@@ -159,7 +159,7 @@ Stores standard reconciliation exception categories.
 | `exception_code`        | varchar   | Short exception code.                  | `AMOUNT_MISMATCH`                       |
 | `exception_name`        | varchar   | Business-friendly exception name.      | `Amount mismatch`                       |
 | `exception_description` | text      | Description of the exception type.     | `Internal and external amounts differ.` |
-| `priority`              | varchar   | Operational priority of the exception. | `High`                                  |
+| `exception_priority`    | varchar   | Operational priority of the exception. | `High`                                  |
 
 Planned exception codes:
 
@@ -202,6 +202,7 @@ Possible `match_status` values:
 
 Possible `break_status` values:
 
+* `NOT_APPLICABLE`
 * `OPEN`
 * `RESOLVED`
 * `CLOSED_AS_TIMING`

@@ -205,12 +205,12 @@ Operational controls may return values above zero because the sample data intent
 
 ### Dashboard preview
 
-![Streamlit Dashboard](images/streamlit_dashboard.png)
-![Streamlit Dashboard](images/streamlit_dashboard-2.png)
-![Streamlit Dashboard](images/streamlit_dashboard-3.png)
-![Streamlit Dashboard](images/streamlit_dashboard-4.png)
-![Streamlit Dashboard](images/streamlit_dashboard-5.png)
-![Streamlit Dashboard](images/streamlit_dashboard-6.png)
+![Streamlit Dashboard](images/streamlit_dashboard.PNG)
+![Streamlit Dashboard](images/streamlit_dashboard-2.PNG)
+![Streamlit Dashboard](images/streamlit_dashboard-3.PNG)
+![Streamlit Dashboard](images/streamlit_dashboard-4.PNG)
+![Streamlit Dashboard](images/streamlit_dashboard-5.PNG)
+![Streamlit Dashboard](images/streamlit_dashboard-6.PNG)
 
 
 ## How to Run

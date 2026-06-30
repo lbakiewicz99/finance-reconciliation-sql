@@ -205,7 +205,12 @@ Operational controls may return values above zero because the sample data intent
 
 ### Dashboard preview
 
-![Finance reconciliation dashboard](images/streamlit_dashboard.png)
+![Streamlit Dashboard](images/streamlit_dashboard.png)
+![Streamlit Dashboard](images/streamlit_dashboard-2.png)
+![Streamlit Dashboard](images/streamlit_dashboard-3.png)
+![Streamlit Dashboard](images/streamlit_dashboard-4.png)
+![Streamlit Dashboard](images/streamlit_dashboard-5.png)
+![Streamlit Dashboard](images/streamlit_dashboard-6.png)
 
 
 ## How to Run

@@ -202,6 +202,12 @@ Data integrity and reconciliation result checks should normally return zero issu
 
 Operational controls may return values above zero because the sample data intentionally contains open breaks, duplicates and mismatches.
 
+
+### Dashboard preview
+
+![Finance reconciliation dashboard](images/streamlit_dashboard.png)
+
+
 ## How to Run
 
 ### 1. Create the database
